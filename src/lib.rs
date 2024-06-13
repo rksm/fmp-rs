@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate tracing;
+
 use reqwest::{Response, StatusCode};
 use serde::de::DeserializeOwned;
 
@@ -26,26 +29,40 @@ impl Client {
     }
 }
 
+#[cfg(debug_assertions)]
 async fn decode_content<T>(response: Response) -> Result<T, StatusCode>
 where
     T: DeserializeOwned,
 {
-    let content = response.json::<T>().await;
-    match content {
-        Ok(s) => Ok(s),
+    let content = match response.text().await {
+        Ok(content) => content,
         Err(e) => {
-            println!("{:?}", e);
-            Err(StatusCode::BAD_REQUEST)
+            error!("{:?}", e);
+            return Err(StatusCode::BAD_REQUEST);
         }
-    }
+    };
+    serde_json::from_str::<T>(&content).map_err(|e| {
+        error!("unable to deserialize: {e:?}\npayload: {content}");
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
+}
+
+#[cfg(not(debug_assertions))]
+async fn decode_content<T>(response: Response) -> Result<T, StatusCode>
+where
+    T: DeserializeOwned,
+{
+    response.json::<T>().await.map_err(|e| {
+        error!("{:?}", e);
+        StatusCode::BAD_REQUEST
+    })
 }
 
 async fn request<T>(endpoint: String) -> Result<T, StatusCode>
 where
     T: DeserializeOwned,
 {
-    let response = reqwest::get(endpoint).await;
-    match response {
+    match reqwest::get(endpoint).await {
         Ok(r) => {
             if r.status() != StatusCode::OK {
                 return Err(r.status());
@@ -53,10 +70,10 @@ where
             decode_content(r).await
         }
         Err(e) => {
-            return if e.is_status() {
+            if e.is_status() {
                 Err(e.status().unwrap())
             } else {
-                println!("{:?}", e);
+                error!("{:?}", e);
                 Err(StatusCode::BAD_REQUEST)
             }
         }

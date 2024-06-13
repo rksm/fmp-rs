@@ -7,7 +7,7 @@ pub struct FMPNews {
     pub symbol: String,
     pub published_date: String,
     pub title: String,
-    pub image: String,
+    pub image: Option<String>,
     pub site: String,
     pub text: String,
     pub url: String,

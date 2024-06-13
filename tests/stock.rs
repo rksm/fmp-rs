@@ -9,7 +9,7 @@ async fn test_batch_stocks() {
     let stocks = result.unwrap();
 
     assert_eq!(stocks.len(), 2);
-    let aapl = stocks.get(0).unwrap();
+    let aapl = stocks.first().unwrap();
     assert_eq!(aapl.symbol, "AAPL");
     let nvda = stocks.get(1).unwrap();
     assert_eq!(nvda.symbol, "NVDA");

@@ -41,8 +41,8 @@ pub struct FMPIncomeStatement {
     pub epsdiluted: f64,
     pub weighted_average_shs_out: f64,
     pub weighted_average_shs_out_dil: f64,
-    pub link: String,
-    pub final_link: String,
+    pub link: Option<String>,
+    pub final_link: Option<String>,
 }
 
 impl Client {
@@ -117,8 +117,8 @@ pub struct FMPBalanceSheetStatement {
     pub total_investments: f64,
     pub total_debt: f64,
     pub net_debt: f64,
-    pub link: String,
-    pub final_link: String,
+    pub link: Option<String>,
+    pub final_link: Option<String>,
 }
 
 impl Client {
@@ -179,8 +179,8 @@ pub struct FMPCashFlowStatement {
     pub operating_cash_flow: f64,
     pub capital_expenditure: f64,
     pub free_cash_flow: f64,
-    pub link: String,
-    pub final_link: String,
+    pub link: Option<String>,
+    pub final_link: Option<String>,
 }
 
 impl Client {

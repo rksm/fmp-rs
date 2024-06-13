@@ -6,11 +6,11 @@ use serde::{Deserialize, Serialize};
 pub struct FMPEarning {
     pub date: String,
     pub symbol: String,
-    pub eps: f64,
-    pub eps_estimated: f64,
+    pub eps: Option<f64>,
+    pub eps_estimated: Option<f64>,
     pub time: String,
-    pub revenue: f64,
-    pub revenue_estimated: f64,
+    pub revenue: Option<f64>,
+    pub revenue_estimated: Option<f64>,
     pub updated_from_date: Option<String>,
     pub fiscal_date_ending: String,
 }
